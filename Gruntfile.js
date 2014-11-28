@@ -37,6 +37,7 @@ module.exports = function(grunt) {
           keyFilename: '.gcloud.json'
         },
         files: [{
+          cwd: '.',
           src: [
             '**/*'
           ]

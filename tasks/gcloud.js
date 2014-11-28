@@ -29,7 +29,7 @@ module.exports = function(grunt) {
     this.files.forEach(function(filePair) {
       filePair.src.forEach(function(src) {
         var srcFile = filePair.cwd + '/' + src,
-          destFile = filePair.dest + '/' + src;
+          destFile = filePair.dest + src;
 
         if (!grunt.file.isDir(srcFile)) {
           asyncTasks.push(
