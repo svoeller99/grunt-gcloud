@@ -17,7 +17,9 @@ module.exports = function(grunt) {
     var done = this.async(),
       options = this.options({
         keyFilename: '.gcloud.json',
-        metadata: {}
+        metadata: {},
+        defaultAcl: null,
+        makePublic: false
       }),
       gcloud = require('gcloud'),
       storage = gcloud({
@@ -25,6 +27,13 @@ module.exports = function(grunt) {
         keyFilename: options.keyFilename
       }).storage(),
       bucket = storage.bucket(options.bucket);
+
+    if(options.makePublic && !options.defaultAcl) {
+      options.defaultAcl = {
+        scope: 'allUsers',
+        role: 'READER'
+      };
+    }
 
     this.files.forEach(function(filePair) {
       filePair.src.forEach(function(src) {
@@ -41,7 +50,16 @@ module.exports = function(grunt) {
                   grunt.fail.warn(err);
                 }
 
-                callback();
+                if (options.defaultAcl) {
+                  file.acl.add(options.defaultAcl, function(err) {
+                    if(err) {
+                      grunt.fail.warn(err);
+                    }
+                    callback();
+                  });
+                } else {
+                  callback();
+                }
               });
             });
         }
